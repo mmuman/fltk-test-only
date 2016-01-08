@@ -458,7 +458,7 @@ void exit_cb(Fl_Widget *,void *) {
   exit(0);
 }
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__HAIKU__)
 #  include <FL/x.H>
 
 void
@@ -495,7 +495,7 @@ apple_open_cb(const char *c) {
   undo_clear();
   if (oldfilename) free((void *)oldfilename);
 }
-#endif // __APPLE__
+#endif // __APPLE__ || __HAIKU__
 
 void open_cb(Fl_Widget *, void *v) {
   if (!v && modflag) {
@@ -1812,9 +1812,9 @@ int main(int argc,char **argv) {
 
   if (c) set_filename(c);
   if (!batch_mode) {
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__HAIKU__)
     fl_open_callback(apple_open_cb);
-#endif // __APPLE__
+#endif // __APPLE__ || __HAIKU__
     Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
     Fl_File_Icon::load_system_icons();
     main_window->callback(exit_cb);
