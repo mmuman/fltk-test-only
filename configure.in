@@ -925,7 +925,7 @@ case $host_os_gui in
 	AC_PATH_XTRA
 
 	if test x$no_x = xyes; then
-	    AC_MSG_ERROR(Configure could not find required X11 libraries, aborting.)
+	    AC_MSG_ERROR([Configure could not find required X11 libraries, aborting.])
 	fi
 
 	if test "x$X_PRE_LIBS" != x; then
