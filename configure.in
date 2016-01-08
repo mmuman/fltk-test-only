@@ -440,6 +440,13 @@ fi
 
 AC_SUBST(LIBCOMMAND)
 
+dnl how to compile (Haiku) resource files
+dnl this will only be used to compile resources for Haiku executable files
+AC_PATH_TOOL(RC,rc)
+AC_PATH_TOOL(XRES,xres)
+AC_PATH_TOOL(SETVERSION,setversion)
+AC_PATH_TOOL(MIMESET,mimeset)
+
 dnl how to compile (Windows) resource files
 dnl this will only be used to compile resources for Windows .exe files
 AC_PATH_TOOL(RC,windres)
