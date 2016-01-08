@@ -832,6 +832,7 @@ AC_SUBST(PTHREAD_FLAGS)
 dnl Define OS-specific stuff...
 HLINKS=
 OSX_ONLY=:
+HAIKU_ONLY=:
 THREADS=
 
 AC_ARG_WITH(links, [  --with-links            make header links for common misspellings [[default=no]]])
@@ -919,6 +920,34 @@ case $host_os_gui in
 	# Install/Uninstall FLUID application
 	INSTALL_DESKTOP="install-osx"
 	UNINSTALL_DESKTOP="uninstall-osx"
+	;;
+
+    haiku*)
+        # Haiku uses its native toolkit for graphics.
+        LIBS="$LIBS -lbe -ltracker"
+
+	if test x$have_pthread = xyes; then
+	    AC_DEFINE(HAVE_PTHREAD)
+	    THREADS="threads$EXEEXT"
+	fi
+
+	if test x$enable_gl != xno; then
+            AC_DEFINE(HAVE_GL)
+            AC_DEFINE(HAVE_GL_GLU_H)
+            GLLIB="-lGL"
+        else
+	    LINKFLTKGL=""
+	    GLLIBNAME=""
+	    GLDSONAME=""
+	    GLDEMOS=""
+        fi
+
+	# Some steps are only done for Haiku package management
+	HAIKU_ONLY=
+
+	# Install/Uninstall FLUID application
+	INSTALL_DESKTOP="install-haiku"
+	UNINSTALL_DESKTOP="uninstall-haiku"
 	;;
 
     *)
@@ -1138,6 +1167,7 @@ AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIB)
 AC_SUBST(HLINKS)
 AC_SUBST(OSX_ONLY)
+AC_SUBST(HAIKU_ONLY)
 AC_SUBST(THREADS)
 
 AC_SUBST(INSTALL_DESKTOP)
@@ -1477,6 +1507,9 @@ case $host_os_gui in
 	;;
     darwin*)
 	graphics="Quartz"
+	;;
+    haiku*)
+	graphics="Haiku"
 	;;
     *)
 	graphics="X11"
