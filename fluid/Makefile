@@ -52,6 +52,12 @@ fluid$(EXEEXT):		$(OBJECTS) $(LIBNAME) $(FLLIBNAME) \
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) $(INSTALL_BIN) fluid fluid.app/Contents/MacOS
+	$(HAIKU_ONLY) $(RC) -o fluid.rsrc fluid.rdef
+	$(HAIKU_ONLY) $(XRES) -o $@ fluid.rsrc
+	$(HAIKU_ONLY) $(SETVERSION) $@ -app $$(echo "$(FL_VERSION)" | tr '.' ' ') \
+		-short "FLTK GUI Designer" \
+		-long "FLTK GUI Designer $$(echo -e '\xc2\xa9')1998-2015 by Bill Spitzak and others."
+	$(HAIKU_ONLY) $(MIMESET) $@
 
 fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 			../src/$(IMGDSONAME)
@@ -62,6 +68,7 @@ clean:
 	-$(RM) *.o core.* *~ *.bck *.bak
 	-$(RM) core fluid$(EXEEXT) fluid-shared$(EXEEXT)
 	-$(RM) fluid.app/Contents/MacOS/fluid$(EXEEXT)
+	$(HAIKU_ONLY) $(RM) fluid.rsrc
 
 depend:	$(CPPFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES)
