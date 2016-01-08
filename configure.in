@@ -790,7 +790,7 @@ if test "x$enable_threads" != xno -a x$check_pthread = xyes; then
 
     if test x$ac_cv_header_pthread_h = xyes; then
 	dnl Check various threading options for the platforms we support
-	for flag in -lpthreads -lpthread -pthread; do
+	for flag in -lpthreads -lpthread -pthread ""; do
             AC_MSG_CHECKING([for pthread_create using $flag])
 	    SAVELIBS="$LIBS"
 	    LIBS="$flag $LIBS"
