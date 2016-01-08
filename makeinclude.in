@@ -59,6 +59,12 @@ MAKEDEPEND	= @MAKEDEPEND@
 # (Windows) resource compiler
 RC		= @RC@
 
+# (Haiku) tools
+#RC		= @RC@
+XRES	= @XRES@
+SETVERSION		= @SETVERSION@
+MIMESET	= @MIMESET@
+
 # flags for C++ compiler:
 ARCHFLAGS	= @ARCHFLAGS@
 OPTIM		= @OPTIM@
