@@ -125,6 +125,9 @@ FLUID		= @FLUID@$(EXEEXT)
 # Possible steps for OS X build only
 OSX_ONLY	= @OSX_ONLY@
 
+# Possible steps for Haiku build only
+HAIKU_ONLY	= @HAIKU_ONLY@
+
 # Man page extensions...
 CAT1EXT		= @CAT1EXT@
 CAT3EXT		= @CAT3EXT@
