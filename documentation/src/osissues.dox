@@ -7,6 +7,7 @@ This appendix describes the operating system specific interfaces in FLTK:
 \li \ref osissues_unix
 \li \ref osissues_win32
 \li \ref osissues_macos
+\li \ref osissues_haiku
 
 \section osissues_accessing Accessing the OS Interfaces
 
@@ -889,6 +890,9 @@ FLTK uses UTF-8-encoded UNIX-style filenames and paths.
 
 \sa  group_macosx 
 
+\section osissues_haiku The Haiku Interface
+
+TODO
 
 \htmlonly
 <hr>
