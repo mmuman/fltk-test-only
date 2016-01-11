@@ -56,6 +56,9 @@
 #ifdef WIN32
 #  include <mmsystem.h>
 #endif // WIN32
+#ifdef __HAIKU__
+#  include <SoundPlayer.h>
+#endif // __HAIKU__
 
 
 //
@@ -108,8 +111,12 @@ class SudokuSound {
 			   const AudioTimeStamp *time_out,
 			   void *client_data);
 #elif defined(__HAIKU__)
+  media_raw_audio_format format;
   short *data;
   int remaining;
+  BSoundPlayer *player;
+  static void audio_cb(void *client_data, void *_buffer, size_t size,
+		      const media_raw_audio_format& format);
 #elif defined(WIN32)
   HWAVEOUT	device;
   HGLOBAL	header_handle;
@@ -257,7 +264,26 @@ SudokuSound::SudokuSound() {
   sample_size = (int)format.mSampleRate / 20;
 
 #elif defined(__HAIKU__)
-//TODO
+  remaining = 0;
+
+  // Set up a format we like...
+  format = media_multi_audio_format::wildcard;
+  format.format = media_raw_audio_format::B_AUDIO_FLOAT;
+  format.frame_rate = 44100.0;	// 44.1kHz
+  format.channel_count = 2;		// stereo
+
+  player = new BSoundPlayer(&format, "Sudoku output", audio_cb, NULL, this);
+  if (player == NULL)
+    return;
+  if (player->InitCheck() != B_OK) {
+    fprintf(stderr, "BSoundPlayer: %s\n", strerror(player->InitCheck()));
+    return;
+  }
+  // get the actual format
+  format = player->Format();
+  sample_size = (int)format.frame_rate / 20; // = format.buffer_size ???
+
+  player->Start();
 #elif defined(WIN32)
   WAVEFORMATEX	format;
 
@@ -374,6 +400,9 @@ SudokuSound::~SudokuSound() {
     GlobalFree(data_handle);
   }
 
+#elif defined(__HAIKU__)
+  player->Stop();
+  delete player;
 #else
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
   if (handle) {
@@ -422,6 +451,33 @@ SudokuSound::audio_cb(AudioDeviceID device,
   return noErr;
 }
 #endif // __APPLE__
+#ifdef __HAIKU__
+// Callback function for writing audio data...
+void
+SudokuSound::audio_cb(void *client_data, void *_buffer, size_t size,
+		      const media_raw_audio_format& format) {
+  SudokuSound *ss = (SudokuSound *)client_data;
+  int count;
+  float *buffer;
+
+  if (!ss->remaining) {
+    ss->player->SetHasData(false);
+    return;
+  }
+
+  for (count = size / sizeof(float),
+          buffer = (float*) _buffer;
+       ss->remaining > 0 && count > 0;
+       count --, ss->data ++, ss->remaining --) {
+    *buffer++ = *(ss->data) / 32767.0;
+  }
+
+  while (count > 0) {
+    *buffer++ = 0.0;
+    count --;
+  }
+}
+#endif // __HAIKU__
 
 #define NOTE_DURATION 50
 
@@ -442,8 +498,12 @@ void SudokuSound::play(char note) {
   data      = sample_data[note - 'A'];
   remaining = sample_size * 2;
 
+  player->SetHasData(true);
+
   // Wait for the sound to complete...
   usleep(NOTE_DURATION*1000);
+
+  // The callback will SetHasData(false) when remaining == 0
 
 #elif defined(WIN32)
   if (sample_size) {
