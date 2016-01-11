@@ -35,7 +35,7 @@ void button_cb(Fl_Widget *,void *) {
 }
 
 #include <FL/x.H>
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__HAIKU__)
 #include "list_visuals.cxx"
 #endif
 
@@ -51,7 +51,7 @@ int arg(int argc, char **argv, int &i) {
 }
 
 int main(int argc, char **argv) {
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__HAIKU__)
   int i = 1;
 
   Fl::args(argc,argv,i,arg);
