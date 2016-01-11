@@ -631,6 +631,10 @@ case $host_os in
 	AUDIOLIBS="-framework CoreAudio"
 	;;
 
+    haiku*)
+	AUDIOLIBS="-lmedia"
+	;;
+
     *)
 	AC_CHECK_HEADER(alsa/asoundlib.h,
 	    AC_DEFINE(HAVE_ALSA_ASOUNDLIB_H)
