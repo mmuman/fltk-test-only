@@ -214,6 +214,8 @@ clean:
 	$(OSX_ONLY) $(RM) blocks.app/Contents/MacOS/blocks$(EXEEXT)
 	$(OSX_ONLY) $(RM) checkers.app/Contents/MacOS/checkers$(EXEEXT)
 	$(OSX_ONLY) $(RM) sudoku.app/Contents/MacOS/sudoku$(EXEEXT)
+	$(HAIKU_ONLY) $(RM) *.rdef
+	$(HAIKU_ONLY) $(RM) *.rsrc
 
 install:	all
 	echo "Installing example programs to $(DESTDIR)$(docdir)/examples..."
