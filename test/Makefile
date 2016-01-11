@@ -460,6 +460,7 @@ sudoku: sudoku.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) sudoku.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) $(INSTALL_BIN) sudoku$(EXEEXT) sudoku.app/Contents/MacOS
+	$(HAIKU_ONLY) ../fltk-config --post $@
 
 sudoku.exe: sudoku.o sudoku.rc
 	echo Linking $@...
