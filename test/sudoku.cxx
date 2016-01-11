@@ -107,6 +107,9 @@ class SudokuSound {
 			   AudioBufferList *data_out,
 			   const AudioTimeStamp *time_out,
 			   void *client_data);
+#elif defined(__HAIKU__)
+  short *data;
+  int remaining;
 #elif defined(WIN32)
   HWAVEOUT	device;
   HGLOBAL	header_handle;
@@ -253,6 +256,8 @@ SudokuSound::SudokuSound() {
   
   sample_size = (int)format.mSampleRate / 20;
 
+#elif defined(__HAIKU__)
+//TODO
 #elif defined(WIN32)
   WAVEFORMATEX	format;
 
@@ -425,6 +430,14 @@ void SudokuSound::play(char note) {
   Fl::check();
 
 #ifdef __APPLE__
+  // Point to the next note...
+  data      = sample_data[note - 'A'];
+  remaining = sample_size * 2;
+
+  // Wait for the sound to complete...
+  usleep(NOTE_DURATION*1000);
+
+#elif defined(__HAIKU__)
   // Point to the next note...
   data      = sample_data[note - 'A'];
   remaining = sample_size * 2;
@@ -707,7 +720,7 @@ Sudoku::Sudoku()
   // Set icon for window (MacOS uses app bundle for icon...)
 #ifdef WIN32
   icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
-#elif !defined(__APPLE__)
+#elif !defined(__APPLE__) && !defined(__HAIKU__)
   fl_open_display();
   icon((char *)XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
                                      (char *)sudoku_bits, sudoku_width,
