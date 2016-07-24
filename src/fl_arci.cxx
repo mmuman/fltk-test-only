@@ -68,6 +68,11 @@ void Fl_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
   }
   CGContextStrokePath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(__HAIKU__)
+  BPoint center(x + 0.5f*w-1, y + 0.5f*h-1);
+//  fl_gc->PushState();
+  fl_gc->StrokeArc(center,w/2,h/2, float(a1),float(a2-a1));
+//  fl_gc->PopState();
 #else
 # error unsupported platform
 #endif
@@ -113,6 +118,11 @@ void Fl_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
   }
   CGContextFillPath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(__HAIKU__)
+  BPoint center(x + 0.5f*w-1, y + 0.5f*h-1);
+//  fl_gc->PushState();
+  fl_gc->FillArc(center,w/2,h/2, float(a1),float(a2-a1));
+//  fl_gc->PopState();
 #else
 # error unsupported platform
 #endif
