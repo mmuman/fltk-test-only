@@ -61,6 +61,10 @@ class NSOpenGLContext;
 #endif // __OBJC__
 typedef NSOpenGLContext* FLOpenGLContextPtr;
 #  define GLContext FLOpenGLContextPtr
+#elif defined(__HAIKU__)
+#  include <GL/gl.h>
+typedef class BGLView* FLOpenGLContext;
+#  define GLContext FLOpenGLContext
 #else
 #  include <GL/glx.h>
 #  define GLContext GLXContext
