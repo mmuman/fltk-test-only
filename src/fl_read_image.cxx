@@ -27,6 +27,8 @@
 
 #if defined(__APPLE__)
 #  include "fl_read_image_mac.cxx"
+#elif defined(__HAIKU__)
+#  include "fl_read_image_haiku.cxx"
 #else
 #  include <FL/Fl_RGB_Image.H>
 #  include <FL/Fl_Window.H>
