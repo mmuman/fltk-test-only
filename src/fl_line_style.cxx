@@ -47,6 +47,10 @@ void fl_quartz_restore_line_style_() {
 }
 #endif
 
+#ifdef __HAIKU__
+pattern fl_gc_pattern = B_SOLID_HIGH;
+#endif
+
 void Fl_Graphics_Driver::line_style(int style, int width, char* dashes) {
 
   // save line width in global variable for X11 clipping
@@ -154,6 +158,32 @@ void Fl_Graphics_Driver::line_style(int style, int width, char* dashes) {
 		fl_quartz_line_pattern_size = 0;
   }
   fl_quartz_restore_line_style_();
+#elif defined(__HAIKU__)
+  static /*enum*/ cap_mode Cap[4] = { B_BUTT_CAP, B_BUTT_CAP,
+                                   B_ROUND_CAP, B_SQUARE_CAP };
+  static /*enum*/ join_mode Join[4] = { B_MITER_JOIN, B_MITER_JOIN,
+                                    B_ROUND_JOIN, B_BEVEL_JOIN };
+  //if (width<1) width = 1;
+  fl_gc->SetPenSize(width);
+  fl_gc->SetLineMode(Cap[(style>>8)&3], Join[(style>>12)&3]);
+
+#if 0
+  static pattern pattern_v_lines = { 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55 };
+  // try to approximate with a pattern
+  switch (style & 0xff) {
+  case FL_DASH:	fl_gc_pattern = B_MIXED_COLORS; break;
+  case FL_DOT:	fl_gc_pattern = B_MIXED_COLORS; break;
+  case FL_DASHDOT:	fl_gc_pattern = B_MIXED_COLORS; break;
+  case FL_DASHDOTDOT: fl_gc_pattern = B_MIXED_COLORS; break;
+  default:
+    fl_gc_pattern = B_SOLID_HIGH;
+  }
+#endif
+
+  // TODO: try to approximate dashes using a pattern
+
+#warning TODO
+
 #else
 # error unsupported platform
 #endif
