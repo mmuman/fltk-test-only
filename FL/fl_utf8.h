@@ -57,6 +57,11 @@
 #  include <wchar.h>
 #  include <sys/stat.h>
 #  define xchar wchar_t
+#elif defined(__HAIKU__)
+#  include <wchar.h>
+#  include <sys/stat.h>
+#  include <locale.h>
+#  define xchar wchar_t
 #else /* X11 */
 #  include <sys/types.h>
 #  include <sys/stat.h>
