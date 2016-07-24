@@ -27,6 +27,8 @@
 #  include "fl_color_win32.cxx"
 #elif defined(__APPLE__)
 #  include "fl_color_mac.cxx"
+#elif defined(__HAIKU__)
+#  include "fl_color_haiku.cxx"
 #else
 
 // Also code to look at the X visual and figure out the best way to turn
