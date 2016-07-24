@@ -29,6 +29,8 @@ void Fl_Window::iconize() {
     ShowWindow(i->xid, SW_SHOWMINNOACTIVE);
 #elif defined(__APPLE__)
     i->collapse();
+#elif defined(__HAIKU__)
+#warning    // TODO
 #else
     XIconifyWindow(fl_display, i->xid, fl_screen);
 #endif
