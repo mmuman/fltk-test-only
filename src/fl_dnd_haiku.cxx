@@ -1,5 +1,5 @@
 //
-// "$Id$"
+// "$Id: fl_dnd_haiku.cxx 9979 2013-09-20 03:36:02Z greg.ercolano $"
 //
 // Drag & Drop code for the Fast Light Tool Kit (FLTK).
 //
@@ -16,16 +16,23 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifdef WIN32
-#  include "fl_dnd_win32.cxx"
-#elif defined(__APPLE__)
-//#  include "fl_dnd_mac.cxx"
-#elif defined(__HAIKU__)
-#  include "fl_dnd_haiku.cxx"
-#else
-#  include "fl_dnd_x.cxx"
-#endif
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/x.H>
+#include "flstring.h"
+
+
+extern char fl_i_own_selection[2];
+extern char *fl_selection_buffer[2];
+
+extern int (*fl_local_grab)(int); // in Fl.cxx
+
+int Fl::dnd() {
+#warning TODO
+  return 1;
+}
+
 
 //
-// End of "$Id$".
+// End of "$Id: fl_dnd_haiku.cxx 9979 2013-09-20 03:36:02Z greg.ercolano $".
 //
