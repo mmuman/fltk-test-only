@@ -46,6 +46,10 @@ void Fl_Image_Surface::prepare_(int w, int h, int highres) {
   offscreen = fl_create_offscreen(w, h);
   helper = new Fl_GDI_Surface_();
   driver(helper->driver());
+#elif defined(__HAIKU__)
+//  helper = new Fl_Haiku_Surface_();
+//  driver(helper->driver());
+#warning TODO
 #else
   gc = 0;
   if (!fl_gc) { // allows use of this class before any window is shown
@@ -88,6 +92,9 @@ Fl_Image_Surface::~Fl_Image_Surface() {
 #elif defined(WIN32)
   fl_delete_offscreen(offscreen);
   delete (Fl_GDI_Surface_*)helper;
+#elif defined(__HAIKU__)
+//  delete (Fl_Haiku_Surface_*)helper;
+#warning TODO
 #else
   fl_delete_offscreen(offscreen);
   if (gc) { XFreeGC(fl_display, gc); fl_gc = 0; }
@@ -119,6 +126,13 @@ Fl_RGB_Image* Fl_Image_Surface::image()
   _ss->set_current(); 
   fl_window=_sw; 
   fl_gc = _sgc;
+#elif defined(__HAIKU__)
+  offscreen->Lock();
+  if (offscreen->ChildAt(0))
+    offscreen->ChildAt(0)->Flush();
+  offscreen->Unlock();
+  data = fl_read_image(NULL, 0, 0, width, height, 0);
+  fl_gc = NULL;
 #else
   fl_pop_clip(); 
   data = fl_read_image(NULL, 0, 0, width, height, 0);
@@ -170,6 +184,10 @@ void Fl_Image_Surface::set_current()
    _savedc = SaveDC(fl_gc); 
   fl_window=(HWND)offscreen; 
   fl_push_no_clip();
+#elif defined(__HAIKU__)
+  fl_gc = offscreen->ChildAt(0);
+  fl_window = 0;
+  Fl_Surface_Device::set_current();
 #else
   pre_window = fl_window; 
   fl_window = offscreen; 

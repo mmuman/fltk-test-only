@@ -57,6 +57,7 @@ private:
   Window _sw; 
   Fl_Surface_Device *_ss;
   int _savedc;
+#elif defined(__HAIKU__)
 #else
   Fl_Surface_Device *previous;
   Window pre_window;
