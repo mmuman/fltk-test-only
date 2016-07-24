@@ -67,6 +67,8 @@ void fl_release_dc(HWND,HDC);
 void fl_cleanup_dc_list(void);
 #elif defined(__APPLE__)
 extern double fl_mac_flush_and_wait(double time_to_wait);
+#elif defined(__HAIKU__)
+void fl_free_fonts(void);
 #endif // WIN32
 
 //
@@ -797,6 +799,9 @@ void Fl::flush() {
 #elif defined (__APPLE_QUARTZ__)
   if (fl_gc)
     CGContextFlush(fl_gc);
+#elif defined (__HAIKU__)
+  if (fl_gc)
+    fl_gc->Flush();
 #else
 # error unsupported platform
 #endif
@@ -905,6 +910,7 @@ static system_handler_link *sys_handlers = 0;
    - X11: XEvent
    - Windows: MSG
    - OS X: NSEvent
+   - Haiku: BMessage
 
  \param ha The event handler function to register
  \param data User data to include on each call
@@ -1118,7 +1124,7 @@ void fl_fix_focus() {
   }
 }
 
-#if !(defined(WIN32) || defined(__APPLE__))
+#if !(defined(WIN32) || defined(__APPLE__) || defined(__HAIKU__))
 extern Fl_Widget *fl_selection_requestor; // from Fl_x.cxx
 #endif
 
@@ -1136,7 +1142,7 @@ void fl_throw_focus(Fl_Widget *o) {
 #endif // DEBUG
 
   if (o->contains(Fl::pushed())) Fl::pushed_ = 0;
-#if !(defined(WIN32) || defined(__APPLE__))
+#if !(defined(WIN32) || defined(__APPLE__) || defined(__HAIKU__))
   if (o->contains(fl_selection_requestor)) fl_selection_requestor = 0;
 #endif
   if (o->contains(Fl::belowmouse())) Fl::belowmouse_ = 0;
@@ -1614,6 +1620,14 @@ void Fl_Window::hide() {
   Fl_X::q_release_context(ip);
   if ( ip->xid == fl_window )
     fl_window = 0;
+#elif defined(__HAIKU__)
+  //if (ip->private_dc) fl_release_dc(ip->xid, ip->private_dc);
+  if (ip->xid == fl_window && fl_gc) {
+    fl_gc->LockLooper(); // keep a lock until we delete it
+    fl_release_dc(fl_window, fl_gc);
+    fl_window = NULL;
+    fl_gc = 0;
+  }
 #endif
 
   if (ip->region) XDestroyRegion(ip->region);
@@ -1643,6 +1657,8 @@ void Fl_Window::hide() {
     delete[] doit;
   }
 #elif defined(__APPLE_QUARTZ__)
+  ip->destroy();
+#elif defined (__HAIKU__)
   ip->destroy();
 #else
 # error unsupported platform
@@ -1676,6 +1692,8 @@ int Fl_Window::handle(int ev)
         XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
 #elif defined(__APPLE_QUARTZ__)
 	i->map();
+#elif defined (__HAIKU__)
+	i->map();
 #else
 # error unsupported platform
 #endif // __APPLE__
@@ -1698,6 +1716,8 @@ int Fl_Window::handle(int ev)
 	XUnmapWindow(fl_display, fl_xid(this));
 #elif defined(__APPLE_QUARTZ__)
 	i->unmap();
+#elif defined (__HAIKU__)
+    i->unmap();
 #else
 # error platform unsupported
 #endif
@@ -1884,6 +1904,8 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
         i->region->rects = (CGRect*)realloc(i->region->rects, (++(i->region->count)) * sizeof(CGRect));
         i->region->rects[i->region->count - 1] = arg;
       }
+#elif defined (__HAIKU__)
+      i->region->Include(BRect(X, Y, X+W-1, Y+H-1));
 #else
 # error unsupported platform
 #endif
@@ -1908,6 +1930,8 @@ void Fl_Window::flush() {
 #ifdef WIN32
 #  include "Fl_win32.cxx"
 //#elif defined(__APPLE__)
+#elif defined(__HAIKU__)
+#  include "Fl_haiku.cxx"
 #endif
 
 
