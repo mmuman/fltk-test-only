@@ -130,6 +130,8 @@ static HRGN bitmap2region(Fl_Image* image) {
   return hRgn;
 }
 
+#elif defined(__HAIKU__)
+#warning TODO
 #else
 
 #ifndef FL_DOXYGEN
@@ -353,6 +355,8 @@ void Fl_Window::draw() {
       SetWindowRgn(fl_xid(this), region, TRUE); // the system deletes the region when it's no longer needed
       delete temp;
     }
+#elif defined(__HAIKU__)
+#warning TODO
 #elif !(defined(__APPLE__) || defined(WIN32))
     if (( shape_data_->lw_ != w() || shape_data_->lh_ != h() ) && shape_data_->shape_) {
         // size of window has changed since last time
