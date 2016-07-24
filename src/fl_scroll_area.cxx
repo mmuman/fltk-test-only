@@ -20,6 +20,7 @@
 // a "callback" which is called to draw rectangular areas that are moved
 // into the drawing area.
 
+#define private public
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -150,6 +151,41 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
     Fl_X::q_end_image();
     CFRelease(img);
     }
+#elif defined(__HAIKU__)
+  BRect src(src_x, src_y, src_x+src_w-1, src_y+src_h-1);
+//  BRect dest = src.OffsetByCopy(dx, dy);
+  BRect dest = src.OffsetToCopy(dest_x, dest_y);
+  BRegion savedClip;
+//  fl_gc->PopState();
+//  fl_gc->GetClippingRegion(&savedClip);
+  fl_gc->PushState();
+BRegion region(fl_gc->Bounds());
+  fl_gc->ConstrainClippingRegion(&region);
+  BRegion reg(src);
+  reg.Include(dest);
+  //fl_gc->GetClippingRegion(&reg);
+  //reg.PrintToStream();
+  fl_gc->Flush();
+//  fl_gc->ConstrainClippingRegion(NULL);
+  fl_gc->Sync();
+  fl_gc->SetFlags(fl_gc->Flags() | B_DRAW_ON_CHILDREN);
+  fl_gc->SetFlags(fl_gc->Flags() & ~B_DRAW_ON_CHILDREN);
+  fl_gc->GetClippingRegion(&reg);
+  reg.PrintToStream();
+  fl_gc->CopyBits(src, dest);
+  fl_gc->Sync();
+  fl_gc->_PrintToStream();
+  fl_gc->GetClippingRegion(&reg);
+  reg.PrintToStream();
+  fl_gc->PopState();
+//  fl_gc->ConstrainClippingRegion(&savedClip);
+//  fl_gc->PushState();
+  fl_gc->GetClippingRegion(&reg);
+  reg.PrintToStream();
+  BMessage m('cpbi');
+  m.AddRect("src", src);
+  m.AddRect("dest", dest);
+  m.PrintToStream();
 #else
 # error unsupported platform
 #endif
