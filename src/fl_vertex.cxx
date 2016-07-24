@@ -125,6 +125,15 @@ void Fl_Graphics_Driver::end_points() {
     CGContextStrokePath(fl_gc);
   }
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(__HAIKU__)
+  //fl_gc->BeginLineArray();
+  for (int i=0; i<n; i++) {
+    BPoint pt(p[i].x, p[i].y);
+    //fl_gc->AddLine(pt, pt, XXX);
+    //XXX: use line pattern?
+    fl_gc->StrokeLine(pt, pt, B_SOLID_HIGH);
+  }
+  //fl_gc->EndLineArray();
 #else
 # error unsupported platform
 #endif
@@ -147,6 +156,17 @@ void Fl_Graphics_Driver::end_line() {
     CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
   CGContextStrokePath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(__HAIKU__)
+  if (n<=1) return;
+  fl_gc->MovePenTo(p[0].x, p[0].y);
+  //fl_gc->BeginLineArray();
+  for (int i=1; i<n; i++) {
+    BPoint pt(p[i].x, p[i].y);
+    //fl_gc->AddLine(pt, pt, XXX);
+    //XXX: use line pattern?
+    fl_gc->StrokeLine(pt, B_SOLID_HIGH);
+  }
+  //fl_gc->EndLineArray();
 #else
 # error unsupported platform
 #endif
@@ -184,6 +204,15 @@ void Fl_Graphics_Driver::end_polygon() {
   CGContextClosePath(fl_gc);
   CGContextFillPath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(__HAIKU__)
+  if (n<=1) return;
+  BPolygon poly;
+  for (int i=0; i<n; i++) {
+    BPoint pt(p[i].x, p[i].y);
+    poly.AddPoints(&pt, 1);
+  }
+  // Fill also strokes the border
+  fl_gc->FillPolygon(&poly, B_SOLID_HIGH);
 #else
 # error unsupported platform
 #endif
@@ -232,6 +261,15 @@ void Fl_Graphics_Driver::end_complex_polygon() {
   CGContextClosePath(fl_gc);
   CGContextFillPath(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(__HAIKU__)
+  if (n<=1) return;
+  BPolygon poly;
+  for (int i=0; i<n; i++) {
+    BPoint pt(p[i].x, p[i].y);
+    poly.AddPoints(&pt, 1);
+  }
+  // Fill also strokes the border
+  fl_gc->FillPolygon(&poly, B_SOLID_HIGH);
 #else
 # error unsupported platform
 #endif
@@ -267,6 +305,13 @@ void Fl_Graphics_Driver::circle(double x, double y,double r) {
   CGContextAddArc(fl_gc, xt, yt, (w+h)*0.25f, 0, 2.0f*M_PI, 0);
   (what == POLYGON ? CGContextFillPath : CGContextStrokePath)(fl_gc);
   CGContextSetShouldAntialias(fl_gc, false);
+#elif defined(__HAIKU__)
+  BPoint pt(xt, yt);
+  if (what == POLYGON)
+    fl_gc->FillEllipse(pt, rx, ry, B_SOLID_HIGH);
+  else
+    fl_gc->StrokeEllipse(pt, rx, ry, B_SOLID_HIGH);
+  // XXX: Fill also strokes the border...
 #else
 # error unsupported platform
 #endif
