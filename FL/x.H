@@ -30,6 +30,8 @@
 #    include "win32.H"
 #  elif defined(__APPLE__)
 #    include "mac.H"
+#  elif defined(__HAIKU__)
+#    include "haiku.H"
 #  else
 #    if defined(_ABIN32) || defined(_ABI64) // fix for broken SGI Irix X .h files
 #      pragma set woff 3322

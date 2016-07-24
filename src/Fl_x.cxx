@@ -20,6 +20,8 @@
 //#  include "Fl_win32.cxx"
 #elif defined(__APPLE__)
 //#  include "Fl_mac.cxx"	// now Fl_cocoa.mm
+#elif defined(__HAIKU__)
+//#  include "Fl_haiku.cxx"
 #elif !defined(FL_DOXYGEN)
 
 #  define CONSOLIDATE_MOTION 1
