@@ -30,6 +30,8 @@
 #  include "fl_draw_image_win32.cxx"
 #elif defined(__APPLE__)
 #  include "fl_draw_image_mac.cxx"
+#elif defined(__HAIKU__)
+#  include "fl_draw_image_haiku.cxx"
 #else
 
 // A list of assumptions made about the X display:
