@@ -73,6 +73,14 @@ int Fl::visual(int flags) {
   return 1;
 }
 
+#elif defined(__HAIKU__)
+
+// \todo Haiku : need to implement Visual flags
+int Fl::visual(int flags) {
+  (void)flags;
+  return 1;
+}
+
 #else
 
 #if USE_XDBE
