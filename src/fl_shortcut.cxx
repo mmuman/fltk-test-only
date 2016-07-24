@@ -39,7 +39,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "flstring.h"
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__HAIKU__)
 #include <FL/x.H>
 #endif
 
@@ -122,6 +122,42 @@ static Keyname table[] = {
 static Keyname table[] = {
   //             v - this column may contain UTF-8 characters
   {' ',         "Space"},
+  {FL_BackSpace,"\xe2\x8c\xab"}, // erase to the left
+  {FL_Tab,	"\xe2\x87\xa5"}, // rightwards arrow to bar
+  {0xff0b,      "\xe2\x8c\xa6"}, // erase to the right
+  {FL_Enter,	"\xe2\x86\xa9"}, // leftwards arrow with hook
+  {FL_Pause,	"Pause"},
+  {FL_Scroll_Lock, "Scroll_Lock"},
+  {FL_Escape,	"\xe2\x90\x9b"},
+  {FL_Home,	"\xe2\x86\x96"}, // north west arrow
+  {FL_Left,	"\xe2\x86\x90"}, // leftwards arrow
+  {FL_Up,	"\xe2\x86\x91"}, // upwards arrow
+  {FL_Right,	"\xe2\x86\x92"}, // rightwards arrow
+  {FL_Down,	"\xe2\x86\x93"}, // downwards arrow
+  {FL_Page_Up,	"\xe2\x87\x9e"}, // upwards arrow with double stroke
+  {FL_Page_Down,"\xe2\x87\x9f"}, // downwards arrow with double stroke
+  {FL_End,	"\xe2\x86\x98"}, // south east arrow
+  {FL_Print,	"Print"},
+  {FL_Insert,	"Insert"},
+  {FL_Menu,	"Menu"},
+  {FL_Num_Lock,	"Num_Lock"},
+  {FL_KP_Enter,	"\xe2\x8c\xa4"}, // up arrow head between two horizontal bars
+  {FL_Shift_L,	"Shift_L"},
+  {FL_Shift_R,	"Shift_R"},
+  {FL_Control_L,"Control_L"},
+  {FL_Control_R,"Control_R"},
+  {FL_Caps_Lock,"\xe2\x87\xaa"}, // upwards white arrow from bar
+  {FL_Meta_L,	"Meta_L"},
+  {FL_Meta_R,	"Meta_R"},
+  {FL_Alt_L,	"Alt_L"},
+  {FL_Alt_R,	"Alt_R"},
+  {FL_Delete,	"\xe2\x8c\xa7"}  // x in a rectangle box
+};
+#elif defined(__HAIKU__)
+#warning TODO
+static Keyname table[] = {
+                                 // v - this column contains UTF-8 characters
+  {' ', "Space"},
   {FL_BackSpace,"\xe2\x8c\xab"}, // erase to the left
   {FL_Tab,	"\xe2\x87\xa5"}, // rightwards arrow to bar
   {0xff0b,      "\xe2\x8c\xa6"}, // erase to the right
@@ -268,7 +304,7 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
   if (eom) *eom = p;
 
   // add key name
-#if defined(WIN32) || defined(__APPLE__) // if not X
+#if defined(WIN32) || defined(__APPLE__) || defined(__HAIKU__) // if not X
   if (key >= FL_F && key <= FL_F_Last) {
     *p++ = 'F';
     if (key > FL_F+9) *p++ = (key-FL_F)/10+'0';
