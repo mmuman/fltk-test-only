@@ -492,64 +492,68 @@ include makedepend
 Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
 Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_WIN32.cxx
 Fl_Native_File_Chooser_MAC.o:	Fl_Native_File_Chooser_MAC.mm
-Fl.o:		Fl_win32.cxx
+Fl.o:		Fl_win32.cxx Fl_haiku.cxx
 Fl_cocoa.o:	Fl_cocoa.mm
 fl_color.o:	fl_color_mac.cxx fl_color_win32.cxx
 fl_dnd.o:	fl_dnd_win32.cxx fl_dnd_x.cxx
-fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx
-fl_font.o:	fl_font_mac.cxx fl_font_x.cxx fl_font_xft.cxx fl_font_win32.cxx
+fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx \
+		fl_draw_image_haiku.cxx
+fl_font.o:	fl_font_mac.cxx fl_font_x.cxx fl_font_xft.cxx \
+		fl_font_win32.cxx fl_font_haiku.cxx
+Fl_haiku.o:	Fl_haiku.cxx
 fl_read_image.o: fl_read_image_mac.cxx fl_read_image_win32.cxx
 fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_x.cxx \
-		fl_set_fonts_xft.cxx fl_set_fonts_win32.cxx
+		fl_set_fonts_xft.cxx fl_set_fonts_win32.cxx \
+		fl_set_fonts_haiku.cxx
 Fl_Printer.o: Fl_GDI_Printer.cxx Fl_PostScript.cxx
 Fl_Quartz_Printer.o:	Fl_Quartz_Printer.mm
-fl_arci.o:	../FL/mac.H ../FL/win32.H
-Fl_arg.o:	../FL/mac.H ../FL/win32.H
-fl_ask.o:	../FL/mac.H ../FL/win32.H
-Fl_Bitmap.o:	../FL/mac.H ../FL/win32.H
-fl_color.o:	../FL/mac.H ../FL/win32.H
-fl_cursor.o:	../FL/mac.H ../FL/win32.H
-fl_dnd.o:	../FL/mac.H ../FL/win32.H
-Fl.o:	../FL/mac.H ../FL/win32.H
-Fl_Double_Window.o:	../FL/mac.H ../FL/win32.H
-fl_draw_image.o:	../FL/mac.H ../FL/win32.H
-fl_draw_image_mac.o:	../FL/mac.H ../FL/win32.H
-fl_draw_image_win32.o:	../FL/mac.H ../FL/win32.H
-fl_draw_pixmap.o:	../FL/mac.H ../FL/win32.H
-fl_encoding_latin1.o:	../FL/mac.H ../FL/win32.H
-fl_encoding_mac_roman.o:   ../FL/mac.H ../FL/win32.H
-Fl_File_Chooser2.o:	../FL/mac.H ../FL/win32.H
-fl_font.o:	../FL/mac.H ../FL/win32.H
-Fl_get_key.o:	../FL/mac.H ../FL/win32.H
-Fl_get_system_colors.o:	../FL/mac.H ../FL/win32.H
-Fl_Gl_Choice.o:	../FL/mac.H ../FL/win32.H
-Fl_Gl_Overlay.o:	../FL/mac.H ../FL/win32.H
-Fl_Gl_Window.o:	../FL/mac.H ../FL/win32.H
-Fl_grab.o:	../FL/mac.H ../FL/win32.H
-Fl_Image.o:	../FL/mac.H ../FL/win32.H
-fl_line_style.o:	../FL/mac.H ../FL/win32.H
-Fl_Menu_Window.o:	../FL/mac.H ../FL/win32.H
-fl_overlay.o:	../FL/mac.H ../FL/win32.H
-fl_overlay_visual.o:	../FL/mac.H ../FL/win32.H
-Fl_Overlay_Window.o:	../FL/mac.H ../FL/win32.H
-Fl_own_colormap.o:	../FL/mac.H ../FL/win32.H
-Fl_Pixmap.o:	../FL/mac.H ../FL/win32.H
-Fl_Printer.o:  ../FL/mac.H ../FL/win32.H
-fl_read_image.o:	../FL/mac.H ../FL/win32.H
-fl_read_image_mac.o:	../FL/mac.H ../FL/win32.H
-fl_read_image_win32.o:	../FL/mac.H ../FL/win32.H
-fl_rect.o:	../FL/mac.H ../FL/win32.H
-fl_scroll_area.o:	../FL/mac.H ../FL/win32.H
-fl_set_font.o:	../FL/mac.H ../FL/win32.H
-fl_set_fonts.o:	../FL/mac.H ../FL/win32.H
-fl_shortcut.o:	../FL/mac.H ../FL/win32.H
-fl_vertex.o:	../FL/mac.H ../FL/win32.H
-Fl_visual.o:	../FL/mac.H ../FL/win32.H
-Fl_Window_fullscreen.o:	../FL/mac.H ../FL/win32.H
-Fl_Window_iconize.o:	../FL/mac.H ../FL/win32.H
-Fl_x.o:	../FL/mac.H ../FL/win32.H
-gl_draw.o:	../FL/mac.H ../FL/win32.H
-gl_start.o:	../FL/mac.H ../FL/win32.H
+fl_arci.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_arg.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_ask.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_Bitmap.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_color.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_cursor.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_dnd.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_Double_Window.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_draw_image.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_draw_image_mac.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_draw_image_win32.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_draw_pixmap.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_encoding_latin1.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_encoding_mac_roman.o:   ../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_File_Chooser2.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_font.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_get_key.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_get_system_colors.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_Gl_Choice.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_Gl_Overlay.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_Gl_Window.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_grab.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_Image.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_line_style.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_Menu_Window.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_overlay.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_overlay_visual.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_Overlay_Window.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_own_colormap.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_Pixmap.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_Printer.o:  ../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_read_image.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_read_image_mac.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_read_image_win32.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_rect.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_scroll_area.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_set_font.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_set_fonts.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_shortcut.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+fl_vertex.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_visual.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_Window_fullscreen.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_Window_iconize.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+Fl_x.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+gl_draw.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
+gl_start.o:	../FL/mac.H ../FL/win32.H ../FL/haiku.H
 
 ################################################################
 
