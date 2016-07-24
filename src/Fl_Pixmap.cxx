@@ -196,6 +196,16 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP
 }
 
 //------------------------------------------------------------------------------
+#elif defined(__HAIKU__)					// Haiku
+//------------------------------------------------------------------------------
+
+void Fl_Haiku_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+  copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
+}
+
+//------------------------------------------------------------------------------
 #else							// X11, Xlib
 //------------------------------------------------------------------------------
 
