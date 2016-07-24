@@ -209,7 +209,7 @@ Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
 
   fl_color(fl_contrast(FL_BLACK, color()));
 
-#if defined(USE_X11) || defined(__APPLE_QUARTZ__)
+#if defined(USE_X11) || defined(__APPLE_QUARTZ__) || defined(__HAIKU__)
   fl_line_style(FL_DOT);
   fl_rect(X + Fl::box_dx(B), Y + Fl::box_dy(B),
           W - Fl::box_dw(B) - 1, H - Fl::box_dh(B) - 1);
