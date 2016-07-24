@@ -54,6 +54,51 @@ void fl_delete_bitmask(Fl_Bitmask bm) {
 }
 
 
+#elif defined(__HAIKU__)
+
+
+Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
+  static uchar reverse[16] =    /* Bit reversal lookup table */
+    { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
+      0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
+  int rowBytes = (w+7)>>3 ;
+
+  BRect frame(0, 0, w - 1, h - 1);
+  BBitmap *id_ = new BBitmap(frame, 0, B_GRAY1);
+  if (id_->InitCheck() != B_OK) {
+    fprintf(stderr, "new BBitmap: %s\n", strerror(id_->InitCheck()));
+    delete id_;
+    return NULL; // XXX
+  }
+
+  int bpr = id_->BytesPerRow();
+  fprintf(stderr, "bpr %d %d\n", rowBytes, bpr);
+
+  id_->LockBits();
+
+  uchar *dst = (uchar *)id_->Bits();
+  const uchar *src = array;
+  //rowBytes
+  for ( int i=h; i>0; i-- ) {
+    for ( int j=0; j<rowBytes; j++, src++ ) {
+//      *dst++ = *src;
+      *dst++ = ((reverse[*src & 0x0f] & 0xf0) | (reverse[(*src >> 4) & 0x0f] & 0x0f))^0xff;
+    }
+    dst += bpr - rowBytes - 1;
+  }
+
+  //memcpy(id_->Bits(), bmask, rowBytes*h);
+
+  id_->UnlockBits();
+  //id_->SetBits(bmask, rowBytes*h, 0L, B_GRAY1);
+
+  return (Fl_Bitmask)id_;
+}
+void fl_delete_bitmask(Fl_Bitmask bm) {
+  delete bm;
+}
+
+
 #elif defined(WIN32) // Windows bitmask functions...
 
 
@@ -344,6 +389,25 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP,
   RestoreDC(tempdc, save);
   DeleteDC(tempdc);
 }  
+
+#elif defined(__HAIKU__)
+void Fl_Haiku_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
+  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+    return;
+  }
+  if (bm->id_ && fl_gc) {
+    BRect rect(X, Y, X + W - 1, Y + H - 1);
+    BView *v = fl_gc;
+    fl_gc->PushState();
+#warning  	// TODO: set drawing mode ?
+#warning  	// Async?
+#warning  	// XXX: locking?
+    fl_gc->DrawBitmap((const BBitmap *)bm->id_, rect);
+    fl_gc->PopState();
+  }
+}
 
 #else // Xlib
 void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {

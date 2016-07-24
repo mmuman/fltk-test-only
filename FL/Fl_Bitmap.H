@@ -34,6 +34,7 @@ class FL_EXPORT Fl_Bitmap : public Fl_Image {
   friend class Fl_Quartz_Graphics_Driver;
   friend class Fl_GDI_Graphics_Driver;
   friend class Fl_GDI_Printer_Graphics_Driver;
+  friend class Fl_Haiku_Graphics_Driver;
   friend class Fl_Xlib_Graphics_Driver;
 public:
 
@@ -45,13 +46,13 @@ public:
   private:
   int start(int XP, int YP, int WP, int HP, int &cx, int &cy, 
 	    int &X, int &Y, int &W, int &H);
-#if defined(__APPLE__) || defined(WIN32)
+#if defined(__APPLE__) || defined(WIN32) || defined(__HAIKU__)
   /** for internal use */
   void *id_;
 #else
   /** for internal use */
   unsigned id_;
-#endif // __APPLE__ || WIN32
+#endif // __APPLE__ || WIN32 || __HAIKU__
 
   public:
 
