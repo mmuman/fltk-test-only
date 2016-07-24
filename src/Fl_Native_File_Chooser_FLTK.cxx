@@ -25,7 +25,9 @@
 #define FLTK_CHOOSER_CREATE    Fl_File_Chooser::CREATE
 
 #include "Fl_Native_File_Chooser_common.cxx"
+#if USE_X11
 #include "Fl_Native_File_Chooser_GTK.cxx"
+#endif
 
 #include <sys/stat.h>
 #include <string.h>
@@ -51,7 +53,7 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
 #endif // FLTK_ABI_VERSION
   if (have_looked_for_GTK_libs == 0) {
     // First Time here, try to find the GTK libs if they are installed
-#if HAVE_DLSYM && HAVE_DLFCN_H
+#if HAVE_DLSYM && HAVE_DLFCN_H && USE_X11
     if (Fl::option(Fl::OPTION_FNFC_USES_GTK)) {
       Fl_GTK_File_Chooser::probe_for_GTK_libs();
     }
@@ -59,8 +61,11 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
     have_looked_for_GTK_libs = -1;
   }
   // if we found all the GTK functions we need, we will use the GtkFileChooserDialog
+#if USE_X11
   if (Fl_GTK_File_Chooser::did_find_GTK_libs) _gtk_file_chooser = new Fl_GTK_File_Chooser(val);
-  else _x11_file_chooser = new Fl_FLTK_File_Chooser(val);
+  else
+#endif
+    _x11_file_chooser = new Fl_FLTK_File_Chooser(val);
 }
 
 /**
