@@ -589,7 +589,7 @@ void Fl_RGB_Image::desaturate() {
   d(new_d);
 }
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__HAIKU__)
 // Composite an image with alpha on systems that don't have accelerated
 // alpha compositing...
 static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
@@ -646,7 +646,7 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
 
   delete[] dst;
 }
-#endif // !WIN32 && !__APPLE__
+#endif // !WIN32 && !__APPLE__ && !__HAIKU__
 
 void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_graphics_driver->draw(this, XP, YP, WP, HP, cx, cy);
@@ -750,6 +750,126 @@ int Fl_Quartz_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP
   CGContextScaleCTM(fl_gc, float(WP)/img->w(), float(HP)/img->h());
   img->draw(0, 0, img->w(), img->h(), 0, 0);
   CGContextRestoreGState(fl_gc);
+  fl_pop_clip(); // restore FLTK's clip
+  return 1;
+}
+
+#elif defined(__HAIKU__)
+void Fl_Haiku_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
+  // Don't draw an empty image...
+  if (!img->d() || !img->array) {
+    img->draw_empty(XP, YP);
+    return;
+  }
+  if (start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
+    return;
+  }
+  if (!img->id_) {
+    color_space space;
+    int32 bpr = B_ANY_BYTES_PER_ROW;
+    bool alpha = false;
+
+    int linedelta = img->ld();
+    if (!linedelta) linedelta = img->w() * img->d();
+
+    switch (img->d()) {
+    case 1: space = B_GRAY8; bpr = linedelta; break;
+    case 2: space = B_RGBA32; alpha = true; break;
+    case 3: space = B_RGB24; bpr = linedelta; break;
+    case 4: space = B_RGBA32; bpr = linedelta; alpha = true; break;
+    default: fprintf(stderr, "invalid delta %d\n", img->d()); break;
+    }
+    // If img->alloc_array == 0, the CGImage data provider must not release the image data.
+    // If img->alloc_array != 0, the CGImage data provider will take responsibilty of deleting RGB image data after use:
+    // when the CGImage is deallocated, the release callback of its data provider
+    // (imgProviderReleaseData) is called and can delete the RGB image data.
+    // If the CGImage is printed, it is not deallocated until after the end of the page,
+    // therefore, with img->alloc_array != 0, the RGB image can be safely deleted any time after return from this function.
+    // The previously unused mask_ member allows to make sure the RGB image data is not deleted by Fl_RGB_Image::uncache().
+    //if (img->alloc_array) img->mask_ = new bool(true);
+    BRect frame(0, 0, img->w() - 1, img->h() - 1);
+    frame.PrintToStream();
+
+    // try with the wanted linedelta...
+    BBitmap *bitmap = new BBitmap(frame, 0, space, bpr);
+    // try again with any bytes per row
+    if (bitmap->InitCheck() != B_OK) {
+      delete bitmap;
+      bpr = B_ANY_BYTES_PER_ROW;
+      bitmap = new BBitmap(frame, 0, space, bpr);
+    }
+
+    img->id_ = bitmap;
+    fprintf(stderr, "bm st %08lx ld %d\n", bitmap->InitCheck(), linedelta);
+
+    bpr = bitmap->BytesPerRow();
+
+	bitmap->LockBits();
+	fprintf(stderr, "bits %p array %p\n", bitmap->Bits(), img->array);
+
+    switch (img->d()) {
+    case 1:
+    case 3:
+    case 4:
+    if (linedelta == bpr)
+      memcpy(bitmap->Bits(), img->array, img->h() * linedelta);
+    else
+      for (int l = 0; l < H; l++)
+        memcpy(((uchar *)bitmap->Bits()) + l * bpr, ((uchar *)img->array) + l * linedelta, linedelta);
+      break;
+    case 2:
+    {
+      const uchar *s = (const uchar *)img->array;
+      uchar *d = (uchar *)bitmap->Bits();
+      for (int l = 0; l < img->h(); l++, s += linedelta, d += bpr) {
+        for (int i = 0; i < img->w(); i++) {
+          // i * delta actually but we optimize it out
+          d[i * 4 + 0] = s[i * 2];
+          d[i * 4 + 1] = s[i * 2];
+          d[i * 4 + 2] = s[i * 2];
+          d[i * 4 + 3] = s[i * 2 + 1];
+        }
+      }
+    }
+      break;
+    }
+
+	bitmap->UnlockBits();
+    //XXX: free data ??
+  }
+  if (img->id_ && fl_gc) {
+    BBitmap *bitmap = (BBitmap *)img->id_;
+    BRect src(cx, cy, cx + W - 1, cy + H - 1);
+    BRect dst(X, Y, X + W - 1, Y + H - 1);
+    //Fl_X::q_begin_image(rect, cx, cy, img->w(), img->h());
+
+    drawing_mode mode = img->d()&1?B_OP_COPY:B_OP_ALPHA;
+
+    fl_gc->PushState();
+    fl_gc->SetDrawingMode(mode);
+
+    fl_gc->DrawBitmap(bitmap, src, dst);
+
+    fl_gc->PopState();
+    //Fl_X::q_end_image();
+  }
+}
+
+int Fl_Haiku_Graphics_Driver::draw_scaled(Fl_Image *img, int XP, int YP, int WP, int HP) {
+  int X, Y, W, H;
+fprintf(stderr, "%s()\n", __PRETTY_FUNCTION__);
+  fl_clip_box(XP,YP,WP,HP,X,Y,W,H); // X,Y,W,H will give the unclipped area of XP,YP,WP,HP
+  if (W == 0 || H == 0) return 1;
+  fl_push_no_clip(); // remove the FLTK clip that can't be rescaled
+  fl_gc->PushState();
+  fl_gc->ClipToRect(BRect(X, Y, X + W - 1, Y + H -1)); // XXX
+  //CGContextClipToRect(fl_gc, CGRectMake(X, Y, W, H)); // this clip path will be rescaled & translated
+  //TODO: CGContextTranslateCTM(fl_gc, XP, YP);
+  //TODO: CGContextScaleCTM(fl_gc, float(WP)/img->w(), float(HP)/img->h());
+  img->draw(0, 0, img->w(), img->h(), 0, 0);
+  fl_gc->PopState();
   fl_pop_clip(); // restore FLTK's clip
   return 1;
 }
