@@ -49,13 +49,15 @@
 #  include "fl_font_win32.cxx"
 #elif defined(__APPLE__)
 #  include "fl_font_mac.cxx"
+#elif defined(__HAIKU__)
+#  include "fl_font_haiku.cxx"
 #elif USE_XFT
 #  include "fl_font_xft.cxx"
 #else
 #  include "fl_font_x.cxx"
 #endif // WIN32
 
-#if ! (defined(WIN32) || defined(__APPLE__))
+#if ! (defined(WIN32) || defined(__APPLE__) || defined(__HAIKU__))
 XFontStruct *fl_X_core_font()
 {
   return fl_xfont.value();
