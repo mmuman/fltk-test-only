@@ -59,6 +59,8 @@ void Fl::grab(Fl_Window* win) {
 #elif defined(__APPLE__)
       fl_capture = Fl_X::i(first_window())->xid;
       Fl_X::i(first_window())->set_key_window();
+#elif defined(__HAIKU__)
+#warning TODO
 #else
       Window xid = fullscreen_win ? fl_xid(fullscreen_win) : fl_xid(first_window());
       XGrabPointer(fl_display,
@@ -87,6 +89,8 @@ void Fl::grab(Fl_Window* win) {
       ReleaseCapture();
 #elif defined(__APPLE__)
       fl_capture = 0;
+#elif defined(__HAIKU__)
+#warning TODO
 #else
       // We must keep the grab in the non-EWMH fullscreen case
       if (!fullscreen_win || Fl_X::ewmh_supported()) {
