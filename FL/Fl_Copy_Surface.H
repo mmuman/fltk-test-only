@@ -64,6 +64,10 @@ private:
 #elif defined(WIN32)
   HDC oldgc;
   HDC gc;
+#elif defined(__HAIKU__)
+//  HDC gc;
+//TODO
+	BView *gc;
 #else // Xlib
   Fl_Offscreen xid;
   Window oldwindow;

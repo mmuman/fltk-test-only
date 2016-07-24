@@ -100,6 +100,8 @@ Fl_Copy_Surface::Fl_Copy_Surface(int w, int h) :  Fl_Surface_Device(NULL)
     SetTextAlign(gc, TA_BASELINE|TA_LEFT);
     SetBkMode(gc, TRANSPARENT);
   } 
+#elif defined(__HAIKU__)
+//TODO
 #else // Xlib
   helper = new Fl_Xlib_Surface_();
   driver(helper->driver());
@@ -136,6 +138,8 @@ Fl_Copy_Surface::~Fl_Copy_Surface()
   DeleteDC(gc);
   fl_gc = oldgc;
   delete (Fl_GDI_Surface_*)helper;
+#elif defined(__HAIKU__)
+//TODO
 #else // Xlib
   fl_pop_clip(); 
   unsigned char *data = fl_read_image(NULL,0,0,width,height,0);
@@ -161,7 +165,7 @@ void Fl_Copy_Surface::draw(Fl_Widget* widget, int delta_x, int delta_y)
 
 void Fl_Copy_Surface::set_current()
 {
-#if defined(__APPLE__) || defined(WIN32)
+#if defined(__APPLE__) || defined(WIN32) || defined(__HAIKU__)
   fl_gc = gc;
   fl_window = (Window)1;
   Fl_Surface_Device::set_current();
@@ -261,7 +265,7 @@ void Fl_Copy_Surface::draw_decorated_window(Fl_Window* win, int delta_x, int del
 #endif // __APPLE__
 
 
-#if !(defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN))
+#if !(defined(__APPLE__) || defined(WIN32) || defined(__HAIKU__) || defined(FL_DOXYGEN))
 /* graphics driver that translates all graphics coordinates before calling Xlib */
 class Fl_translated_Xlib_Graphics_Driver_ : public Fl_Xlib_Graphics_Driver {
   int offset_x, offset_y; // translation between user and graphical coordinates: graphical = user + offset
