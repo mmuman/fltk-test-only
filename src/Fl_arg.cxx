@@ -28,7 +28,7 @@
 #include <ctype.h>
 #include "flstring.h"
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) || defined(__HAIKU__)
 int XParseGeometry(const char*, int*, int*, unsigned int*, unsigned int*);
 #  define NoValue	0x0000
 #  define XValue  	0x0001
@@ -194,7 +194,7 @@ int Fl::arg(int argc, char **argv, int &i) {
     if (!flags) return 0;
     geometry = v;
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__HAIKU__)
   } else if (fl_match(s, "display", 2)) {
     Fl::display(v);
 #endif
@@ -295,7 +295,7 @@ void Fl_Window::show(int argc, char **argv) {
 
   Fl::get_system_colors();
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__HAIKU__)
   // Get defaults for drag-n-drop and focus...
   const char *key = 0, *val;
 
@@ -316,7 +316,7 @@ void Fl_Window::show(int argc, char **argv) {
   if (val) Fl::visible_focus(strcasecmp(val, "true") == 0 ||
                              strcasecmp(val, "on") == 0 ||
                              strcasecmp(val, "yes") == 0);
-#endif // !WIN32 && !__APPLE__
+#endif // !WIN32 && !__APPLE__ && !__HAIKU__
 
   // set colors first, so background_pixel is correct:
   static char beenhere;
@@ -355,7 +355,7 @@ void Fl_Window::show(int argc, char **argv) {
   // Show the window AFTER we have set the colors and scheme.
   show();
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__HAIKU__)
   // set the command string, used by state-saving window managers:
   int j;
   int n=0; for (j=0; j<argc; j++) n += strlen(argv[j])+1;
@@ -365,7 +365,7 @@ void Fl_Window::show(int argc, char **argv) {
   XChangeProperty(fl_display, fl_xid(this), XA_WM_COMMAND, XA_STRING, 8, 0,
 		  (unsigned char *)buffer, p-buffer-1);
   delete[] buffer;
-#endif // !WIN32 && !__APPLE__
+#endif // !WIN32 && !__APPLE__ && !__HAIKU__
 }
 
 // Calls useful for simple demo programs, with automatic help message:
@@ -402,7 +402,7 @@ void Fl::args(int argc, char **argv) {
   int i; if (Fl::args(argc,argv,i) < argc) Fl::error(helpmsg);
 }
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) || defined(__HAIKU__)
 
 /* the following function was stolen from the X sources as indicated. */
 
