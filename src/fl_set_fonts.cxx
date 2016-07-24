@@ -26,6 +26,8 @@
 #  include "fl_set_fonts_win32.cxx"
 #elif defined(__APPLE__)
 #  include "fl_set_fonts_mac.cxx"
+#elif defined(__HAIKU__)
+#  include "fl_set_fonts_haiku.cxx"
 #elif USE_XFT
 #  include "fl_set_fonts_xft.cxx"
 #else

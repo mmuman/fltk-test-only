@@ -28,7 +28,7 @@
 
 #  if USE_XFT
 typedef struct _XftFont XftFont;
-#  elif !defined(WIN32) && !defined(__APPLE__)
+#  elif !defined(WIN32) && !defined(__APPLE__) && !defined(__HAIKU__)
 #    include "Xutf8.h"
 #  endif // USE_XFT
 
@@ -60,6 +60,10 @@ public:
 #     endif
   ATSUStyle style;
   short ascent, descent, q_width;
+#  elif defined(__HAIKU__)
+  FL_EXPORT Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
+  class BFont *font;
+  int angle;
 #  elif USE_XFT
   XftFont* font;
   //const char* encoding;
