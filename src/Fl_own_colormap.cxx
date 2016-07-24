@@ -45,6 +45,11 @@ void Fl::own_colormap() {}
 // MacOS X always provides a TrueColor interface...
 
 void Fl::own_colormap() {}
+#elif defined(__HAIKU__)
+// Haiku supports 8-bit displays but only with a system colormap.
+// it will handle TrueColor drawing on lower depth itself anyway.
+
+void Fl::own_colormap() {}
 #else
 // X version
 
