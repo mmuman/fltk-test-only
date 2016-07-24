@@ -57,6 +57,9 @@ static int enableHotspot = 1;
 #ifdef __APPLE__
 extern "C" void NSBeep(void);
 #endif
+#ifdef __HAIKU__
+#include <Beep.h>
+#endif
 
 static char avoidRecursion = 0;
 
@@ -307,6 +310,25 @@ void fl_beep(int type) {
       NSBeep();
       break;
     default :
+      break;
+  }
+#elif defined(__HAIKU__)
+  switch (type) {
+    case FL_BEEP_QUESTION :
+    case FL_BEEP_PASSWORD :
+      system_beep("Important notification");
+      break;
+    case FL_BEEP_MESSAGE :
+      system_beep("Important notification");
+      break;
+    case FL_BEEP_NOTIFICATION :
+      system_beep("Information notification");
+      break;
+    case FL_BEEP_ERROR :
+      system_beep("Error notification");
+      break;
+    default :
+      beep(); //XXX: should really be that verbose?
       break;
   }
 #else
