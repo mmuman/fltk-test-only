@@ -56,6 +56,22 @@ extern "C" {
   unsigned short XUtf8IsNonSpacing(unsigned int ucs);
 }
 
+#elif defined(__HAIKU__)
+# include <stdio.h>
+# include <time.h>
+//# include <unix.h>
+# include <fcntl.h>
+# include <unistd.h>
+# include <wchar.h>
+# include <stdlib.h>
+#   include <sys/types.h>
+# include <sys/stat.h>
+
+extern "C" {
+  int XUtf8Tolower(int ucs);
+  unsigned short XUtf8IsNonSpacing(unsigned int ucs);
+}
+
 #else // X-windows platform
 
 # include "Xutf8.h"

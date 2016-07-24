@@ -16,7 +16,7 @@
 
 #define KEYSYM2UCS_INCLUDED
 
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__HAIKU__)
 
 #include "../Xutf8.h"
 #include "imKStoUCS.c"
