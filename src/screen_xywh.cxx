@@ -142,6 +142,30 @@ static void screen_init() {
   num_screens = count;
 }
 
+#elif defined(__HAIKU__)
+static XRectangle screens[MAX_SCREENS];
+static float dpi_h[MAX_SCREENS];
+static float dpi_v[MAX_SCREENS];
+
+static void screen_init() {
+  BScreen screen(B_MAIN_SCREEN_ID);
+  int i;
+
+  for( i = 0; i < MAX_SCREENS; i++) {
+    BRect r = screen.Frame();
+    screens[i].x      = int(r.left);
+    screens[i].y      = int(r.top);
+    screens[i].width  = int(r.right - r.left + 1);
+    screens[i].height = int(r.bottom - r.top + 1);
+//fprintf(stderr,"screen %d %dx%dx%dx%d\n",i,screens[i].x,screens[i].y,screens[i].width,screens[i].height);
+    dpi_h[i] = dpi_v[i] = 75.;
+
+    if (screen.SetToNext() != B_OK || !screen.IsValid())
+      break;
+  }
+  num_screens = i;
+}
+
 #else // X11
 
 #if HAVE_XINERAMA
@@ -307,6 +331,8 @@ void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int n) {
   H = work_area[n].bottom - Y;
 #elif defined(__APPLE__)
   Fl_X::screen_work_area(X, Y, W, H, n);
+//#elif defined(__HAIKU__)
+//XXX: if main screen, remove BDeskbar's frame at least, or not?
 #else
   if (n == 0) { // for the main screen, these return the work area
     X = Fl::x();
@@ -346,6 +372,11 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
     H = GetSystemMetrics(SM_CYSCREEN);
   }
 #elif defined(__APPLE__)
+  X = screens[n].x;
+  Y = screens[n].y;
+  W = screens[n].width;
+  H = screens[n].height;
+#elif defined(__HAIKU__)
   X = screens[n].x;
   Y = screens[n].y;
   W = screens[n].width;
@@ -442,6 +473,11 @@ void Fl::screen_dpi(float &h, float &v, int n)
     v = float(dpi[n][1]);
   }
 #elif defined(__APPLE__)
+  if (n >= 0 && n < num_screens) {
+    h = dpi_h[n];
+    v = dpi_v[n];
+  }
+#elif defined(__HAIKU__)
   if (n >= 0 && n < num_screens) {
     h = dpi_h[n];
     v = dpi_v[n];
