@@ -34,7 +34,10 @@ const char *Fl_Quartz_Graphics_Driver::class_id = "Fl_Quartz_Graphics_Driver";
 const char *Fl_GDI_Graphics_Driver::class_id = "Fl_GDI_Graphics_Driver";
 const char *Fl_GDI_Printer_Graphics_Driver::class_id = "Fl_GDI_Printer_Graphics_Driver";
 #endif
-#if !(defined(__APPLE__) || defined(WIN32))
+#if defined(__HAIKU__) || defined(FL_DOXYGEN)
+const char *Fl_Haiku_Graphics_Driver::class_id = "Fl_Haiku_Graphics_Driver";
+#endif
+#if !(defined(__APPLE__) || defined(WIN32) || defined(__HAIKU__))
 const char *Fl_Xlib_Graphics_Driver::class_id = "Fl_Xlib_Graphics_Driver";
 #endif
 
@@ -86,6 +89,8 @@ Fl_Display_Device *Fl_Display_Device::display_device() {
                                                                   Fl_Quartz_Graphics_Driver
 #elif defined(WIN32)
                                                                   Fl_GDI_Graphics_Driver
+#elif defined(__HAIKU__)
+                                                                  Fl_Haiku_Graphics_Driver
 #else
                                                                   Fl_Xlib_Graphics_Driver
 #endif
