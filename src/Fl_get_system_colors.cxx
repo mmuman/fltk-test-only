@@ -92,7 +92,7 @@ static void set_selection_color(uchar r, uchar g, uchar b) {
   Fl::set_color(FL_SELECTION_COLOR,r,g,b);
 }
 
-#if defined(WIN32) || defined(__APPLE__)
+#if defined(WIN32) || defined(__APPLE__) || defined(__HAIKU__)
 
 #  include <stdio.h>
 // simulation of XParseColor:
@@ -129,7 +129,7 @@ int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
     return 1;
   } else return 0;
 }
-#endif // WIN32 || __APPLE__
+#endif // WIN32 || __APPLE__ || __HAIKU__
 
 
 /** \fn Fl::get_system_colors()
@@ -200,6 +200,35 @@ void Fl::get_system_colors()
 #endif
 }
 
+#elif defined(__HAIKU__)			// --- HAIKU ---
+
+static void
+getsyscolor(color_which what, const char* arg, void (*func)(uchar,uchar,uchar))
+{
+  if (arg) {
+    uchar r,g,b;
+    if (!fl_parse_color(arg, r,g,b))
+      Fl::error("Unknown color: %s", arg);
+    else
+      func(r,g,b);
+  } else {
+    rgb_color c = ui_color(what);
+    func(c.red, c.green, c.blue);
+  }
+}
+
+// Haiku system colors using ui_color()...
+void Fl::get_system_colors() {
+  fl_open_display();
+
+  // XXX:panel or document?
+  //don't check so we can reload them on B_UI_SETTINGS_CHANGED
+  /*if (!fl_bg2_set)*/ getsyscolor(B_DOCUMENT_BACKGROUND_COLOR,	fl_bg2,Fl::background2);
+  /*if (!fl_fg_set)*/ getsyscolor(B_PANEL_TEXT_COLOR,	fl_fg, Fl::foreground);
+  /*if (!fl_bg_set)*/ getsyscolor(B_PANEL_BACKGROUND_COLOR,	fl_bg, Fl::background);
+  getsyscolor(B_NAVIGATION_BASE_COLOR,	0,     set_selection_color);
+}
+
 #else						// --- X11 ---
 
 // Read colors that KDE writes to the xrdb database.
@@ -237,7 +266,7 @@ void Fl::get_system_colors()
   getsyscolor("Text", "selectBackground", 0, "#000080", set_selection_color);
 }
 
-#endif					// --- WIN32 | APPLE | X11 ---
+#endif					// --- WIN32 | APPLE | HAIKU | X11 ---
 
 
 //// Simple implementation of 2.0 Fl::scheme() interface...
@@ -292,13 +321,13 @@ static Fl_Pixmap	tile(tile_xpm);
 int Fl::scheme(const char *s) {
   if (!s) {
     if ((s = getenv("FLTK_SCHEME")) == NULL) {
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32) && !defined(__APPLE__) && !defined(__HAIKU__)
       const char* key = 0;
       if (Fl::first_window()) key = Fl::first_window()->xclass();
       if (!key) key = "fltk";
       fl_open_display();
       s = XGetDefault(fl_display, key, "scheme");
-#endif // !WIN32 && !__APPLE__
+#endif // !WIN32 && !__APPLE__ && !__HAIKU__
     }
   }
 
