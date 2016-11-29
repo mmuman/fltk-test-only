@@ -126,7 +126,7 @@ public:
   // the default implementation of filename_ext() is in src/filename_ext.cxx and may be enough
   virtual const char *filename_ext(const char *buf);
   // implement to support fl_filename_name()
-  virtual const char *filename_name(const char *buf) {return buf;}
+  virtual const char *filename_name(const char *buf);
   // whether a platform uses additional code in Fl_Menu::handle(int e)
   virtual int need_menu_handle_part2() {return 0;}
   // whether a platform uses additional code in Fl_Menu::handle_part1(int e)

@@ -207,6 +207,14 @@ Fl_System_Driver::filename_relative(char *to,	// O - Relative filename
   return 1;
 }
 
+// returns pointer to the filename, or null if name ends with '/'
+const char *Fl_System_Driver::filename_name(const char *name) {
+  const char *p,*q;
+  if (!name) return (0);
+  for (p=q=name; *p;) if (isdirsep(*p++)) q = p;
+  return q;
+}
+
 //
 // End of "$Id$".
 //
