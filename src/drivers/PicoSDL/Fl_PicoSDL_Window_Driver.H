@@ -27,9 +27,9 @@
 
 #include "../Pico/Fl_Pico_Window_Driver.H"
 
-#define __APPLE__
+//#define __APPLE__
 #include <SDL2/SDL.h>
-#undef __APPLE__
+//#undef __APPLE__
 
 
 class FL_EXPORT Fl_PicoSDL_Window_Driver : public Fl_Pico_Window_Driver

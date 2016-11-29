@@ -25,9 +25,9 @@
 #include <FL/Fl_Window_Driver.H>
 
 #include <FL/Fl.H>
-#define __APPLE__
+//#define __APPLE__
 #include <SDL2/SDL.h>
-#undef __APPLE__
+//#undef __APPLE__
 
 extern Window fl_window;
 

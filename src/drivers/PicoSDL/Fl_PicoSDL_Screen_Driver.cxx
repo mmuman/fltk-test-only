@@ -23,9 +23,9 @@
 #include <FL/x.H>
 #include <FL/Fl_Window_Driver.H>
 
-#define __APPLE__
+//#define __APPLE__
 #include <SDL2/SDL.h>
-#undef __APPLE__
+//#undef __APPLE__
 
 
 // FIXME: does that have to be here?
