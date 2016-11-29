@@ -84,6 +84,17 @@ typedef struct HGLRC__ *GLContext;
 #include <sys/stat.h>
 struct dirent {char d_name[1];};
 
+#elif defined(__HAIKU__)
+# pragma message "FL_HAIKU: FIXME"
+typedef void* Fl_Offscreen;
+typedef void* Fl_Bitmask;
+typedef void *Fl_Region;
+typedef  int FL_SOCKET;
+typedef void *GLContext;
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
+
 #elif defined(FL_PORTING)
 # pragma message "FL_PORTING: define OS-dependent types"
 typedef void* Fl_Offscreen;
