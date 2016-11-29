@@ -125,6 +125,17 @@ if(WIN32)
     endif(MINGW AND EXISTS /mingw)
 endif(WIN32)
 
+if(HAIKU)
+    if(OPTION_HAIKU_SDL)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SDL2_INCLUDE_DIRS} -DFL_NO_HAIKU -DFL_PORTING")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SDL2_INCLUDE_DIRS} -DFL_NO_HAIKU -DFL_PORTING")
+    else()
+        add_definitions(-DFL_PORTING)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lbe -ltracker")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lbe -ltracker")
+    endif(OPTION_HAIKU_SDL)
+endif(HAIKU)
+
 #######################################################################
 # size of ints
 include(CheckTypeSize)

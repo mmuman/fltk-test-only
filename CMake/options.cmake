@@ -78,6 +78,20 @@ if (OPTION_APPLE_SDL)
 endif(OPTION_APPLE_SDL)
 
 #######################################################################
+if(HAIKU)
+   option(OPTION_HAIKU_SDL "use SDL" OFF)
+endif(HAIKU)
+
+if (OPTION_HAIKU_SDL)
+    find_package(SDL2 REQUIRED)
+    if (SDL2_FOUND)
+      set(USE_SDL 1)
+      set(FL_PORTING 1)
+      list(APPEND FLTK_LDLIBS SDL2_LIBRARY)
+   endif(SDL2_FOUND)
+endif(OPTION_HAIKU_SDL)
+
+#######################################################################
 option(OPTION_USE_POLL "use poll if available" OFF)
 mark_as_advanced(OPTION_USE_POLL)
 
